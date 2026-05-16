@@ -7,8 +7,11 @@ const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';       // EmailJS > Account > Publi
 const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';      // EmailJS > Email Services > Service ID
 const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';    // EmailJS > Email Templates > Template ID
 
-// Business WhatsApp (country code + number, no + or spaces)
-const BUSINESS_WHATSAPP = '971544630447';           // WhatsApp number
+// Business WhatsApp numbers per branch
+const WHATSAPP_NUMBERS = {
+    dubai: '971544630447',
+    sharjah: '971528434127'
+};
 
 // Clinic name
 const CLINIC_NAME = 'Shanthi Wellness Medical Center';
@@ -49,6 +52,7 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
     const phone = document.getElementById('phone').value.trim();
     const date = document.getElementById('date').value;
     const time = document.getElementById('time').value;
+    const branch = document.getElementById('branch').value;
     const treatment = document.getElementById('treatment').value;
     const message = document.getElementById('message').value.trim();
 
@@ -74,6 +78,10 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
 
     // Show success page
     function showSuccess() {
+        // Get WhatsApp number based on selected branch
+        const whatsappNumber = WHATSAPP_NUMBERS[branch] || WHATSAPP_NUMBERS.dubai;
+        const branchName = branch === 'dubai' ? 'Dubai' : 'Sharjah';
+
         // Build WhatsApp message (formatted for business)
         const whatsappText = encodeURIComponent(
             `🙏 *New Appointment Booking*\n` +
@@ -81,6 +89,7 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
             `👤 *Patient:* ${name}\n` +
             `📞 *Phone:* ${phone}\n` +
             `📧 *Email:* ${email}\n\n` +
+            `🏢 *Branch:* ${branchName}\n` +
             `🌿 *Treatment:* ${treatment}\n` +
             `📅 *Date:* ${formattedDate}\n` +
             `🕐 *Time:* ${time}\n\n` +
@@ -89,8 +98,8 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
             `Booked via ${CLINIC_NAME} Online`
         );
 
-        // Redirect to WhatsApp directly
-        window.location.href = `https://wa.me/${BUSINESS_WHATSAPP}?text=${whatsappText}`;
+        // Redirect to WhatsApp based on branch
+        window.location.href = `https://wa.me/${whatsappNumber}?text=${whatsappText}`;
     }
 
     // Send email or skip if not configured
