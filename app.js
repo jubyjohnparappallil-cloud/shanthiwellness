@@ -1,11 +1,6 @@
 // ============================================================
-// CONFIGURATION - Update these with your details
+// CONFIGURATION
 // ============================================================
-
-// EmailJS (free at https://www.emailjs.com - 200 emails/month)
-const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';       // EmailJS > Account > Public Key
-const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';      // EmailJS > Email Services > Service ID
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';    // EmailJS > Email Templates > Template ID
 
 // Business WhatsApp numbers per branch
 const WHATSAPP_NUMBERS = {
@@ -19,15 +14,6 @@ const CLINIC_NAME = 'Shanthi Wellness Medical Center';
 // ============================================================
 // APP LOGIC
 // ============================================================
-
-// Initialize EmailJS (only if configured)
-try {
-    if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-        emailjs.init(EMAILJS_PUBLIC_KEY);
-    }
-} catch (err) {
-    console.warn('EmailJS init skipped:', err);
-}
 
 // Form submission
 document.getElementById('bookingForm').addEventListener('submit', function (e) {
@@ -43,7 +29,6 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
 
     // Collect form data
     var name = document.getElementById('name').value.trim();
-    var email = document.getElementById('email').value.trim();
     var phone = document.getElementById('phone').value.trim();
     var branch = document.getElementById('branch').value;
 
@@ -58,8 +43,7 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
         '\u{1F64F} *New Appointment Booking*\n' +
         '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n' +
         '\u{1F464} *Patient:* ' + name + '\n' +
-        '\u{1F4DE} *Phone:* ' + phone + '\n' +
-        '\u{1F4E7} *Email:* ' + email + '\n\n' +
+        '\u{1F4DE} *Phone:* ' + phone + '\n\n' +
         '\u{1F3E2} *Branch:* ' + branchName + '\n\n' +
         '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n' +
         'Booked via ' + CLINIC_NAME + ' Online'
@@ -68,20 +52,7 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
     // WhatsApp URL
     var whatsappURL = 'https://wa.me/' + whatsappNumber + '?text=' + whatsappText;
 
-    // Try sending email in background, but always redirect to WhatsApp
-    if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-            to_email: email,
-            to_name: name,
-            phone: phone,
-            branch: branchName,
-            clinic_name: CLINIC_NAME
-        }).catch(function (err) {
-            console.warn('Email send failed:', err);
-        });
-    }
-
-    // Redirect to WhatsApp after a brief moment (so user sees the loading)
+    // Redirect to WhatsApp after a brief moment
     setTimeout(function () {
         window.open(whatsappURL, '_blank');
 
