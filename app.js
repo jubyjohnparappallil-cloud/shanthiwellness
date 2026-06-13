@@ -27,13 +27,6 @@ const CLINIC_NAME = 'Shanthi Wellness Medical Center';
     }
 })();
 
-// Set minimum date to today
-document.addEventListener('DOMContentLoaded', function () {
-    const dateInput = document.getElementById('date');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
-});
-
 // Form submission
 document.getElementById('bookingForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -50,50 +43,33 @@ document.getElementById('bookingForm').addEventListener('submit', function (e) {
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
-    const date = document.getElementById('date').value;
-    const time = document.getElementById('time').value;
     const branch = document.getElementById('branch').value;
-    const treatment = document.getElementById('treatment').value;
-    const message = document.getElementById('message').value.trim();
 
-    // Format date nicely
-    const formattedDate = new Date(date).toLocaleDateString('en-IN', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    // Get branch name
+    const branchName = branch === 'dubai' ? 'Dubai' : 'Sharjah';
 
     // Email template parameters
     const templateParams = {
         to_email: email,
         to_name: name,
         phone: phone,
-        date: formattedDate,
-        time: time,
-        treatment: treatment,
-        message: message || 'None',
+        branch: branchName,
         clinic_name: CLINIC_NAME
     };
 
-    // Show success page
+    // Show success / redirect to WhatsApp
     function showSuccess() {
         // Get WhatsApp number based on selected branch
         const whatsappNumber = WHATSAPP_NUMBERS[branch] || WHATSAPP_NUMBERS.dubai;
-        const branchName = branch === 'dubai' ? 'Dubai' : 'Sharjah';
 
-        // Build WhatsApp message (formatted for business)
+        // Build WhatsApp message
         const whatsappText = encodeURIComponent(
             `🙏 *New Appointment Booking*\n` +
             `━━━━━━━━━━━━━━━━━\n\n` +
             `👤 *Patient:* ${name}\n` +
             `📞 *Phone:* ${phone}\n` +
             `📧 *Email:* ${email}\n\n` +
-            `🏢 *Branch:* ${branchName}\n` +
-            `🌿 *Treatment:* ${treatment}\n` +
-            `📅 *Date:* ${formattedDate}\n` +
-            `🕐 *Time:* ${time}\n\n` +
-            `📝 *Notes:* ${message || 'None'}\n\n` +
+            `🏢 *Branch:* ${branchName}\n\n` +
             `━━━━━━━━━━━━━━━━━\n` +
             `Booked via ${CLINIC_NAME} Online`
         );
